@@ -1,0 +1,95 @@
+
+> storefront@0.1.0 dev
+> next dev
+
+▲ Next.js 16.4.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.56.1:3000
+- Environments: .env.local
+✓ Ready in 375ms
+⚠ Warning: Next.js ignored pnpm-workspace.yaml in d:\ecommerce-platform because it is outside the current Git repository (D:\ecommerce-platform\apps\storefront).
+ To use this directory, set `turbopack.root` in your Next.js config.
+
+✓ Running next.config.ts took 32ms
+- Cache Components enabled
+- Partial Prefetching enabled
+- Experiments (use with caution):
+  ✓ agentFeedback
+
+ GET / 200 in 803ms (next.js: 139ms, application-code: 665ms)
+ GET /products 200 in 53ms (next.js: 6ms, application-code: 47ms)
+Error: Route "/": Next.js encountered uncached data during prerendering.
+
+`fetch(...)` or `connection()` accessed outside of `<Suspense>` prevents the route from being prerendered, blocking the page load and leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [cache] Cache the data access with `"use cache"` (does not apply to `connection()`)
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-dynamic
+    at apiFetch (app\lib\api.ts:18:26)
+    at HomePage (app\page.tsx:14:28)
+  16 |   init?: RequestInit,
+  17 | ): Promise<T> {
+> 18 |   const response = await fetch(
+     |                          ^
+  19 |     `${getApiUrl()}${path.startsWith('/') ? path : `/${path}`}`,
+  20 |     {
+  21 |       ...init,
+Error: Route "/products": Next.js encountered runtime data during prerendering.
+
+`cookies()`, `headers()`, `params`, or `searchParams` accessed outside of `<Suspense>` prevents the route from being prerendered, blocking the page load and leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-runtime
+    at ProductsPage (app\products\page.tsx:9:32)
+   7 |   searchParams: Promise<{ category?: string; search?: string }>;
+   8 | }) {
+>  9 |   const { category, search } = await searchParams;
+     |                                ^
+  10 |
+  11 |   let filteredProducts = products;
+  12 |
+ GET / 200 in 493ms (next.js: 1.0ms, application-code: 492ms)
+Error: Route "/": Next.js encountered uncached data during prerendering.
+
+`fetch(...)` or `connection()` accessed outside of `<Suspense>` prevents the route from being prerendered, blocking the page load and leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [cache] Cache the data access with `"use cache"` (does not apply to `connection()`)
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-dynamic
+    at apiFetch (app\lib\api.ts:18:26)
+    at HomePage (app\page.tsx:14:28)
+  16 |   init?: RequestInit,
+  17 | ): Promise<T> {
+> 18 |   const response = await fetch(
+     |                          ^
+  19 |     `${getApiUrl()}${path.startsWith('/') ? path : `/${path}`}`,
+  20 |     {
+  21 |       ...init,
+ GET /products 200 in 35ms (next.js: 1.1ms, application-code: 34ms)
+Error: Route "/products": Next.js encountered runtime data during prerendering.
+
+`cookies()`, `headers()`, `params`, or `searchParams` accessed outside of `<Suspense>` prevents the route from being prerendered, blocking the page load and leading to a slower user experience.
+
+Ways to fix this:
+  - [stream] Provide a placeholder with `<Suspense fallback={...}>` around the data access
+  - [block] Set `export const instant = false` to allow a blocking route
+
+Learn more: https://nextjs.org/docs/messages/blocking-prerender-runtime
+    at ProductsPage (app\products\page.tsx:9:32)
+   7 |   searchParams: Promise<{ category?: string; search?: string }>;
+   8 | }) {
+>  9 |   const { category, search } = await searchParams;
+     |                                ^
+  10 |
+  11 |   let filteredProducts = products;
+  12 |
+[?25h
