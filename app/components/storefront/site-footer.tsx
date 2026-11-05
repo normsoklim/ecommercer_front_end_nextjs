@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { Share2, Mail } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 /**
  * The year is read on the client only. The server renders a stable
@@ -16,13 +17,14 @@ const getClientYear = () => new Date().getFullYear();
 const getServerYear = () => FALLBACK_YEAR;
 
 const footerLinks = [
-  { label: "Shop all", href: "/products" },
-  { label: "Clothing", href: "/products?category=Clothing" },
-  { label: "Shoes", href: "/products?category=Shoes" },
-  { label: "Accessories", href: "/products?category=Accessories" },
+  { key: "shopAll", href: "/products" },
+  { key: "clothing", href: "/products?category=Clothing" },
+  { key: "shoes", href: "/products?category=Shoes" },
+  { key: "accessories", href: "/products?category=Accessories" },
 ];
 
 export default function SiteFooter() {
+  const t = useTranslations("Footer");
   const year = useSyncExternalStore(
     subscribeToNothing,
     getClientYear,
@@ -30,34 +32,34 @@ export default function SiteFooter() {
   );
 
   return (
-    <footer className="mt-12 border-t border-slate-200 bg-white">
+    <footer className="mt-12 border-t border-border bg-background">
       <div className="mx-auto grid max-w-[1440px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-10 lg:py-16">
         <div>
-          <Link href="/" className="text-2xl font-black tracking-tight text-slate-950">
-            ShopEase<span className="text-indigo-600">.</span>
+          <Link href="/" className="text-2xl font-black tracking-tight text-foreground">
+            ShopEase<span className="text-primary">.</span>
           </Link>
-          <p className="mt-4 max-w-sm text-sm leading-6 text-slate-500">
-            Everyday essentials, carefully selected for your style and lifestyle.
+          <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">
+            {t("everydayEssentials")}
           </p>
           <div className="mt-5 flex gap-3">
             <a
               href="https://www.instagram.com/"
               aria-label="Instagram"
-              className="rounded-full border border-slate-200 p-2.5 text-slate-600 hover:text-indigo-600"
+              className="rounded-full border border-border p-2.5 text-muted-foreground hover:text-primary"
             >
               <Share2 size={18} />
             </a>
             <a
               href="https://www.facebook.com/"
               aria-label="Facebook"
-              className="rounded-full border border-slate-200 p-2.5 text-slate-600 hover:text-indigo-600"
+              className="rounded-full border border-border p-2.5 text-muted-foreground hover:text-primary"
             >
               <Share2 size={18} />
             </a>
             <a
               href="mailto:support@example.com"
               aria-label="Email support"
-              className="rounded-full border border-slate-200 p-2.5 text-slate-600 hover:text-indigo-600"
+              className="rounded-full border border-border p-2.5 text-muted-foreground hover:text-primary"
             >
               <Mail size={18} />
             </a>
@@ -65,15 +67,15 @@ export default function SiteFooter() {
         </div>
 
         <div>
-          <h3 className="text-sm font-bold text-slate-900">Shop</h3>
+          <h3 className="text-sm font-bold text-foreground">{t("shop")}</h3>
           <ul className="mt-4 space-y-3">
             {footerLinks.map((link) => (
-              <li key={link.label}>
+              <li key={link.key}>
                 <Link
                   href={link.href}
-                  className="text-sm text-slate-500 hover:text-indigo-600"
+                  className="text-sm text-muted-foreground hover:text-primary"
                 >
-                  {link.label}
+                  {t(link.key as "shopAll" | "clothing" | "shoes" | "accessories")}
                 </Link>
               </li>
             ))}
@@ -81,18 +83,18 @@ export default function SiteFooter() {
         </div>
 
         <div>
-          <h3 className="text-sm font-bold text-slate-900">Customer care</h3>
-          <ul className="mt-4 space-y-3 text-sm text-slate-500">
-            <li><Link href="/contact" className="hover:text-indigo-600">Contact us</Link></li>
-            <li><Link href="/shipping" className="hover:text-indigo-600">Shipping information</Link></li>
-            <li><Link href="/returns" className="hover:text-indigo-600">Returns and refunds</Link></li>
-            <li><Link href="/privacy" className="hover:text-indigo-600">Privacy policy</Link></li>
+          <h3 className="text-sm font-bold text-foreground">{t("customerCare")}</h3>
+          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+            <li><Link href="/contact" className="hover:text-primary">{t("contactUs")}</Link></li>
+            <li><Link href="/shipping" className="hover:text-primary">{t("shippingInfo")}</Link></li>
+            <li><Link href="/returns" className="hover:text-primary">{t("returnsRefunds")}</Link></li>
+            <li><Link href="/privacy" className="hover:text-primary">{t("privacyPolicy")}</Link></li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-slate-100 px-4 py-5 text-center text-xs text-slate-500">
-        © {year} ShopEase. All rights reserved.
+      <div className="border-t border-border px-4 py-5 text-center text-xs text-muted-foreground">
+        {t("copyright", { year })}
       </div>
     </footer>
   );

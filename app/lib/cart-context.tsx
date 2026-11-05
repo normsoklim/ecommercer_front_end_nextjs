@@ -20,8 +20,8 @@ import {
   updateCartItemQuantity,
   type AddToCartInput,
 } from './cart';
-import { prefetchCsrfToken } from './api';
-import type { CartItem } from './api-types';
+import { ApiError, prefetchCsrfToken } from './api';
+import type { Cart, CartItem } from './api-types';
 
 interface CartContextType {
   items: CartItem[];
@@ -49,6 +49,17 @@ interface CartState {
 }
 
 const EMPTY_CART: CartState = { token: null, items: [] };
+
+/** Removes duplicate cart items by id, keeping the last occurrence. Guards
+ * against React duplicate-key errors if the server ever returns the same
+ * cart item id more than once. */
+function dedupeItems(items: CartItem[]): CartItem[] {
+  const seen = new Map<string, CartItem>();
+  for (const item of items) {
+    seen.set(item.id, item);
+  }
+  return [...seen.values()];
+}
 
 /** Loads the cart of a customer, a failing request results in an empty cart. */
 async function loadCart(): Promise<CartState> {
@@ -78,7 +89,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const addingRef = useRef<Set<string>>(new Set());
 
   const items =
-    state.token === 'cart' ? state.items : EMPTY_CART.items;
+    state.token === 'cart' ? dedupeItems(state.items ?? []) : EMPTY_CART.items;
 
   // Keep the ref in sync with the committed state.
   itemsRef.current = items;
@@ -149,8 +160,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
           (item) => item.productId === input.productId && item.variantId === variantKey,
         );
 
-        // Use the existing item's unitPrice so the subtotal stays correct
-        // immediately (avoids showing $0 until the server responds).
         const optimisticItem: CartItem = {
           id: `optimistic-${Date.now()}-${Math.random().toString(36).slice(2)}`,
           cartId: 'optimistic',
@@ -174,31 +183,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
 
       try {
-        // Persist the change on the backend (single request).
-        const created = await addToCart(input);
+        // Persist the change on the backend. The server returns the full cart.
+        const cart = await addToCart(input);
 
-        // Reconcile: replace the optimistic placeholder with the server's item.
-        // No full-cart refresh() here — the optimistic update already shows the
-        // item instantly and the server response reconciles it. Skipping the
-        // extra getCart request keeps add-to-cart fast.
-        setState((prev) => {
-          if (prev.token !== 'cart') {
-            return prev;
-          }
-
-          return {
-            ...prev,
-            items: prev.items.map((item) =>
-              String(item.id).startsWith('optimistic-') && item.productId === input.productId
-                ? {
-                    ...created,
-                    // Preserve any product/variant data we already had optimistically.
-                    product: item.product ?? created.product,
-                    variant: item.variant ?? created.variant,
-                  }
-                : item
-            ),
-          };
+        // Replace optimistic state with the server's cart.
+        setState({
+          token: 'cart',
+          items: cart.items,
         });
       } catch (err) {
         // --- Roll back the optimistic change ---
@@ -239,10 +230,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
 
       try {
-        await updateCartItemQuantity(itemId, quantity);
-        // After a successful server update, reconcile with the server state.
-        await refresh();
+        const cart = await updateCartItemQuantity(itemId, quantity);
+
+        // Reconcile with the server's cart. Guard against a missing items
+        // array (e.g. if the backend returns a partial payload) by falling
+        // back to an empty array so the cart UI never crashes.
+        setState({
+          token: 'cart',
+          items: cart.items ?? [],
+        });
       } catch (err) {
+        // If the item is already gone on the server (404), just sync with the
+        // server instead of surfacing an error to the user.
+        if (err instanceof ApiError && err.status === 404) {
+          await refresh();
+          return;
+        }
         // Roll back the optimistic change.
         setState({ token: 'cart', items: previousItems });
 
@@ -252,7 +255,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, refresh],
   );
 
   const removeItem = useCallback(
@@ -277,9 +280,22 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       });
 
       try {
-        await removeCartItem(itemId);
-        await refresh();
+        const cart = await removeCartItem(itemId);
+
+        // Reconcile with the server's cart. Guard against a missing items
+        // array (e.g. if the backend returns a partial payload) by falling
+        // back to an empty array so the cart UI never crashes.
+        setState({
+          token: 'cart',
+          items: cart.items ?? [],
+        });
       } catch (err) {
+        // If the item is already gone on the server (404), just sync with the
+        // server instead of surfacing an error to the user.
+        if (err instanceof ApiError && err.status === 404) {
+          await refresh();
+          return;
+        }
         // Roll back the optimistic change.
         setState({ token: 'cart', items: previousItems });
 
@@ -289,7 +305,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         throw err;
       }
     },
-    [isAuthenticated],
+    [isAuthenticated, refresh],
   );
 
   const clear = useCallback(async () => {
@@ -304,8 +320,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setState({ token: 'cart', items: [] });
 
     try {
-      await clearCartRequest();
-      await refresh();
+      const cart = await clearCartRequest();
+
+      // Reconcile with the server's cart.
+      setState({
+        token: 'cart',
+        items: cart.items,
+      });
     } catch (err) {
       setState({ token: 'cart', items: previousItems });
 

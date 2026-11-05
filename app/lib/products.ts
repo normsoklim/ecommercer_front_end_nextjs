@@ -1,6 +1,3 @@
-'use cache';
-
-import { cacheLife, cacheTag } from 'next/cache';
 import type {
   Category,
   PaginatedProductsResponse,
@@ -15,9 +12,12 @@ function getApiUrl(): string {
   return url.replace(/\/+$/, '');
 }
 
-const FETCH_TIMEOUT_MS = 10000;
+const FETCH_TIMEOUT_MS = 500;
 
-async function fetchJson<T>(path: string): Promise<T> {
+async function fetchJson<T>(
+  path: string,
+  headers: Record<string, string> = {},
+): Promise<T> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
@@ -25,7 +25,10 @@ async function fetchJson<T>(path: string): Promise<T> {
     const response = await fetch(
       `${getApiUrl()}${path.startsWith('/') ? path : `/${path}`}`,
       {
-        headers: { Accept: 'application/json' },
+        headers: {
+          Accept: 'application/json',
+          ...headers,
+        },
         signal: controller.signal,
       },
     );
@@ -44,10 +47,8 @@ async function fetchJson<T>(path: string): Promise<T> {
 
 export async function getProducts(
   query: ProductQuery = {},
+  locale = 'en',
 ): Promise<PaginatedProductsResponse> {
-  cacheLife('minutes');
-  cacheTag('products');
-
   const searchParams = new URLSearchParams();
   if (query.page) searchParams.set('page', String(query.page));
   if (query.limit) searchParams.set('limit', String(query.limit));
@@ -59,6 +60,7 @@ export async function getProducts(
   try {
     return await fetchJson<PaginatedProductsResponse>(
       `/products${search ? `?${search}` : ''}`,
+      { 'Accept-Language': locale },
     );
   } catch {
     return {
@@ -75,23 +77,22 @@ export async function getProducts(
 
 export async function getProductBySlug(
   slug: string,
+  locale = 'en',
 ): Promise<Product | null> {
-  cacheLife('minutes');
-  cacheTag('products', `product-${slug}`);
-
   try {
-    return await fetchJson<Product>(`/products/slug/${slug}`);
+    return await fetchJson<Product>(`/products/slug/${slug}`, {
+      'Accept-Language': locale,
+    });
   } catch {
     return null;
   }
 }
 
-export async function getCategories(): Promise<Category[]> {
-  cacheLife('hours');
-  cacheTag('categories');
-
+export async function getCategories(locale = 'en'): Promise<Category[]> {
   try {
-    return await fetchJson<Category[]>('/categories');
+    return await fetchJson<Category[]>('/categories', {
+      'Accept-Language': locale,
+    });
   } catch {
     return [];
   }

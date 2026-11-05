@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import type { CartItem } from '@/app/lib/api-types';
+import { useCartDrawer } from '@/app/components/cart/CartDrawerContext';
 
 type OrderSummaryProps = {
   items: CartItem[];
@@ -30,6 +30,7 @@ export default function OrderSummary({
   currency = 'USD',
   title = 'Order summary',
 }: OrderSummaryProps) {
+  const { open: openCartDrawer } = useCartDrawer();
   return (
     <aside className="h-fit rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
       <h2 className="text-lg font-bold text-slate-950">{title}</h2>
@@ -87,12 +88,13 @@ export default function OrderSummary({
         </span>
       </div>
 
-      <Link
-        href="/cart"
+      <button
+        type="button"
+        onClick={openCartDrawer}
         className="mt-6 flex w-full items-center justify-center rounded-xl border border-slate-200 px-6 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50"
       >
         Back to cart
-      </Link>
+      </button>
     </aside>
   );
 }

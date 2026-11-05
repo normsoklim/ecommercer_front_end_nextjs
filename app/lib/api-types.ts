@@ -15,6 +15,12 @@ export type ProductImage = {
   id: string;
   productId: string;
   url: string;
+  /** Thumbnail resolution (~150 x 150). Derived from `url` when absent. */
+  thumbnailUrl?: string;
+  /** Main image resolution (~800 x 800). Derived from `url` when absent. */
+  mediumUrl?: string;
+  /** Original resolution for the zoom panel (~1600 x 1600+). Derived from `url` when absent. */
+  originalUrl?: string;
   altText: string | null;
   sortOrder: number;
   isPrimary: boolean;
@@ -144,6 +150,9 @@ export type CartItem = {
   variantId: string | null;
   quantity: number;
   unitPrice: number;
+  lineTotal?: number;
+  availableStock?: number;
+  isAvailable?: boolean;
   createdAt?: string;
   updatedAt?: string;
   product?: {
@@ -163,6 +172,11 @@ export type Cart = {
   id: string;
   userId: string;
   items: CartItem[];
+  itemCount: number;
+  summary: {
+    subtotal: number;
+    currency: string;
+  };
   createdAt?: string;
   updatedAt?: string;
 };

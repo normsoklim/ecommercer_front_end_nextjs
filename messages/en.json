@@ -1,0 +1,160 @@
+{
+  "Navigation": {
+    "home": "Home",
+    "products": "Products",
+    "categories": "Categories",
+    "cart": "Shopping Cart",
+    "wishlist": "Wishlist",
+    "login": "Login",
+    "register": "Register",
+    "account": "Account",
+    "logout": "Logout",
+    "checkout": "Checkout",
+    "Common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "search": "Search",
+      "searchPlaceholder": "Search products..."
+    },
+    "Home": {
+      "freeShipping": "Free shipping on orders over $100"
+    }
+  },
+  "Home": {
+    "title": "Welcome to our store",
+    "description": "Discover our latest products",
+    "shopNow": "Shop Now",
+    "freeShipping": "Free shipping on orders over $100"
+  },
+  "Product": {
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "price": "Price",
+    "description": "Description",
+    "stock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "category": "Category",
+    "sku": "SKU"
+  },
+  "ProductCard": {
+    "viewProduct": "View product",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist"
+  },
+  "ProductSection": {
+    "handpickedForYou": "Handpicked for you",
+    "featuredProducts": "Featured products",
+    "discoverText": "Discover the pieces customers love.",
+    "viewAll": "View all",
+    "noProducts": "No products yet",
+    "noProductsDescription": "Products added from the admin panel will show up here."
+  },
+  "CategorySection": {
+    "exploreCollection": "Explore the collection",
+    "shopByCategory": "Shop by category",
+    "viewAll": "View all",
+    "exploreCollectionDesc": "Explore the collection"
+  },
+  "ValueStrip": {
+    "freeShipping": "Free shipping",
+    "freeShippingDesc": "On every order over $100",
+    "easyReturns": "Easy returns",
+    "easyReturnsDesc": "30 days, no questions asked",
+    "secureCheckout": "Secure checkout",
+    "secureCheckoutDesc": "Encrypted payments every time",
+    "alwaysHere": "Always here",
+    "alwaysHereDesc": "Support seven days a week"
+  },
+  "Footer": {
+    "shopAll": "Shop all",
+    "clothing": "Clothing",
+    "shoes": "Shoes",
+    "accessories": "Accessories",
+    "shop": "Shop",
+    "customerCare": "Customer care",
+    "contactUs": "Contact us",
+    "shippingInfo": "Shipping information",
+    "returnsRefunds": "Returns and refunds",
+    "privacyPolicy": "Privacy policy",
+    "everydayEssentials": "Everyday essentials, carefully selected for your style and lifestyle.",
+    "copyright": "© {year} ShopEase. All rights reserved."
+  },
+  "ProductPurchasePanel": {
+    "signInToAdd": "Sign in to add this product to your cart",
+    "cartLinked": "Your cart is linked to your account.",
+    "signIn": "Sign in",
+    "variants": "Variants",
+    "quantity": "Quantity",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "adding": "Adding...",
+    "addToCart": "Add to cart",
+    "addedToCart": "Added to your cart.",
+    "couldNotAdd": "Could not add the product to the cart.",
+    "viewCart": "View cart"
+  },
+  "QuickAddToCart": {
+    "signInToAdd": "Sign in to add items to your cart.",
+    "couldNotAdd": "Could not add the product to the cart.",
+    "adding": "Adding...",
+    "added": "Added",
+    "addToCart": "Add to cart"
+  },
+  "Common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "searchPlaceholder": "Search products...",
+    "error": "An error occurred",
+    "success": "Success"
+  },
+  "Checkout": {
+    "title": "Checkout",
+    "shippingAddress": "Shipping Address",
+    "paymentMethod": "Payment Method",
+    "orderSummary": "Order Summary",
+    "placeOrder": "Place Order",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total"
+  },
+  "Auth": {
+    "signIn": "Sign in",
+    "createAccount": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "Language": {
+    "label": "Language",
+    "english": "English",
+    "khmer": "ខ្មែរ"
+  },
+  "Hero": {
+    "slide1": {
+      "eyebrow": "NEW COLLECTION 2026",
+      "title": "Discover Your Own Style.",
+      "description": "Explore our latest collection and find something that feels uniquely yours.",
+      "buttonText": "Shop Collection"
+    },
+    "slide2": {
+      "eyebrow": "EVERYDAY ESSENTIALS",
+      "title": "Simple Looks. Big Impact.",
+      "description": "Upgrade your everyday wardrobe with timeless pieces.",
+      "buttonText": "Explore Now"
+    },
+    "slide3": {
+      "eyebrow": "SPECIAL SELECTION",
+      "title": "Make Every Moment Count.",
+      "description": "Discover products selected to make your lifestyle better.",
+      "buttonText": "Discover More"
+    }
+  }
+}

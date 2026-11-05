@@ -1,6 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import {NextRequest, NextResponse} from 'next/server';
+import createMiddleware from 'next-intl/middleware';
+import {routing} from './src/i18n/routing';
 
-export function proxy(request: NextRequest) {
+const intlMiddleware = createMiddleware(routing);
+
+export default function proxy(request: NextRequest) {
+  const response = intlMiddleware(request);
+
+  // CSP headers
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",
@@ -15,8 +22,6 @@ export function proxy(request: NextRequest) {
     "frame-src 'self' https://js.stripe.com https://maps.google.com",
     "worker-src 'self' blob: https://maps.googleapis.com",
   ].join('; ');
-
-  const response = NextResponse.next();
 
   response.headers.set(
     'Content-Security-Policy-Report-Only',

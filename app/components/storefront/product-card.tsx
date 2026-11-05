@@ -3,12 +3,14 @@
 import Link from "next/link";
 import { Heart, Star } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useWishlist } from "@/app/lib/wishlist-context";
 import { useAuth } from "@/app/lib/auth-context";
 import QuickAddToCart from "@/app/components/storefront/quick-add-to-cart";
 import type { Product } from "@/app/lib/api-types";
 
 export default function ProductCard({ product }: { product: Product }) {
+  const t = useTranslations("ProductCard");
   const { addItem, removeItem, isAuthenticated } = useWishlist();
   const { isLoading: authLoading } = useAuth();
 
@@ -49,7 +51,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   return (
     <article className="group min-w-0">
-      <div className="relative overflow-hidden rounded-2xl bg-slate-100">
+      <div className="relative overflow-hidden rounded-2xl bg-muted">
         <Link href={`/product/${product.slug}`} className="block">
           <div className="aspect-[4/5] overflow-hidden">
             <img
@@ -62,18 +64,18 @@ export default function ProductCard({ product }: { product: Product }) {
         </Link>
 
         {discount > 0 && (
-          <span className="absolute left-3 top-3 rounded-full bg-slate-950 px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
+          <span className="absolute left-3 top-3 rounded-full bg-foreground px-2.5 py-1 text-[11px] font-bold text-background shadow-sm">
             -{discount}%
           </span>
         )}
 
         <button
           type="button"
-          aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
+          aria-label={liked ? t("removeFromWishlist") : t("addToWishlist")}
           aria-pressed={liked}
           onClick={handleToggleWishlist}
           disabled={toggling || (!isAuthenticated && !authLoading)}
-          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-700 shadow-sm transition-colors hover:text-rose-500 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-background text-foreground shadow-sm transition-colors hover:text-rose-500 dark:hover:text-rose-400 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {toggling ? (
             <Heart size={18} />
@@ -88,38 +90,38 @@ export default function ProductCard({ product }: { product: Product }) {
 
         <Link
           href={`/product/${product.slug}`}
-          className="absolute bottom-3 left-3 right-3 translate-y-2 rounded-xl bg-white/95 py-3 text-center text-sm font-semibold text-slate-900 opacity-0 shadow-sm transition-all duration-300 hover:bg-indigo-600 hover:text-white group-hover:translate-y-0 group-hover:opacity-100 focus:translate-y-0 focus:opacity-100"
+          className="absolute bottom-3 left-3 right-3 translate-y-2 rounded-xl bg-background/95 py-3 text-center text-sm font-semibold text-foreground opacity-0 shadow-sm transition-all duration-300 hover:bg-indigo-600 hover:text-white group-hover:translate-y-0 group-hover:opacity-100 focus:translate-y-0 focus:opacity-100"
         >
-          View product
+          {t("viewProduct")}
         </Link>
       </div>
 
       <div className="pt-4">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500">
+        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           {categoryName}
         </p>
 
         <Link
           href={`/product/${product.slug}`}
-          className="mt-1 block text-sm font-semibold text-slate-900 hover:text-indigo-600"
+          className="mt-1 block text-sm font-semibold text-foreground hover:text-indigo-600 dark:hover:text-indigo-400"
         >
           {product.name}
         </Link>
 
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-baseline gap-2">
-            <span className="text-base font-bold text-slate-950">
+            <span className="text-base font-bold text-foreground">
               ${price.toFixed(2)}
             </span>
 
             {originalPrice && originalPrice > price && (
-              <span className="text-sm text-slate-400 line-through">
+              <span className="text-sm text-muted-foreground line-through">
                 ${originalPrice.toFixed(2)}
               </span>
             )}
           </div>
 
-          <span className="flex items-center gap-1 text-xs text-slate-600">
+          <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Star size={13} fill="#F59E0B" strokeWidth={0} />
             {product.reviews?.length
               ? (
@@ -128,7 +130,7 @@ export default function ProductCard({ product }: { product: Product }) {
               ).toFixed(1)
               : "0.0"
             }
-            <span className="text-slate-400">({product.reviews?.length ?? 0})</span>
+            <span className="text-muted-foreground">({product.reviews?.length ?? 0})</span>
           </span>
         </div>
 

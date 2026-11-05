@@ -237,7 +237,7 @@ export default function ProductImageZoom({
           ref={imgRef}
           src={selectedImage.url}
           alt={selectedImage.altText ?? alt}
-          className="h-full w-full object-cover cursor-crosshair transition-transform duration-200 hover:scale-105"
+          className="h-full w-full object-cover cursor-crosshair transition-transform duration-300 hover:scale-110"
           onClick={openLightbox}
           onMouseMove={onImageMouseMove}
           onMouseLeave={onImageMouseLeave}

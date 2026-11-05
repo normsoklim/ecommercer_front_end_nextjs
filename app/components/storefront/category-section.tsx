@@ -1,61 +1,45 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Category } from "@/app/lib/api-types";
 import { getCategories } from "@/app/lib/products";
 
-/** Used when the API has no categories yet, the layout still looks complete. */
-const fallbackCategories = [
-  {
-    name: "Clothing",
-    description: "Everyday essentials",
-    image:
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=700&q=85",
-  },
-  {
-    name: "Shoes",
-    description: "Made to move",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=85",
-  },
-  {
-    name: "Accessories",
-    description: "The finishing touch",
-    image:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=700&q=85",
-  },
-];
+export default function CategorySection() {
+  const t = useTranslations("CategorySection");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function CategorySection() {
-  const categories: Category[] = await getCategories();
+  useEffect(() => {
+    getCategories().then((data) => {
+      setCategories(data);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return null;
+  }
 
   const shorten = (text: string, max = 64) =>
     text.length > max ? `${text.slice(0, max).trimEnd()}...` : text;
 
-  // Real categories first, the static set fills the row so the section never
-  // ends up with a lonely card in a three column grid.
   const items = [
     ...categories.slice(0, 3).map((category, index) => ({
       name: category.name,
       description: shorten(
-        category.description ?? "Explore the collection",
+        category.description ?? t("exploreCollectionDesc"),
       ),
       href: `/products?category=${category.slug}`,
       image:
-        category.imageUrl ??
-        fallbackCategories[index % fallbackCategories.length].image,
-    })),
-    ...fallbackCategories
-      .filter(
-        (fallback) =>
-          !categories.some(
-            (category) =>
-              category.name.toLowerCase() === fallback.name.toLowerCase(),
-          ),
-      )
+        category.imageUrl
+    }))
       .map((fallback) => ({
         name: fallback.name,
         description: fallback.description,
-        href: `/products?category=${fallback.name}`,
+        href: fallback.href,
         image: fallback.image,
       })),
   ].slice(0, 3);
@@ -64,19 +48,19 @@ export default async function CategorySection() {
     <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-10 lg:py-20">
       <div className="mb-7 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-indigo-600">
-            Explore the collection
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+            {t("exploreCollection")}
           </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-            Shop by category
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {t("shopByCategory")}
           </h2>
         </div>
 
         <Link
           href="/products"
-          className="hidden items-center gap-1 text-sm font-semibold text-slate-700 transition-colors hover:text-indigo-600 sm:flex"
+          className="hidden items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-primary sm:flex"
         >
-          View all <ArrowUpRight size={16} />
+          {t("viewAll")} <ArrowUpRight size={16} />
         </Link>
       </div>
 
@@ -85,11 +69,11 @@ export default async function CategorySection() {
           <Link
             key={category.name}
             href={category.href}
-            className="group relative overflow-hidden rounded-2xl bg-slate-100"
+            className="group relative overflow-hidden rounded-2xl bg-muted"
           >
             <div className="aspect-[5/4] overflow-hidden">
               <img
-                src={category.image}
+                src={category.image ?? '/placeholder-product.svg'}
                 alt={category.name}
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -106,7 +90,7 @@ export default async function CategorySection() {
                 </p>
               </div>
 
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-slate-900 transition-colors group-hover:bg-indigo-600 group-hover:text-white">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-background text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                 <ArrowUpRight size={20} />
               </span>
             </div>

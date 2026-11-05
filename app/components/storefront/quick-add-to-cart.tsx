@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Check, Loader2, ShoppingBag } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCart } from '@/app/lib/cart-context';
 import { useAuth } from '@/app/lib/auth-context';
 import type { ProductVariant } from '@/app/lib/api-types';
@@ -17,11 +18,17 @@ export default function QuickAddToCart({
   productName,
   variants,
 }: QuickAddToCartProps) {
+  const t = useTranslations("QuickAddToCart");
   const { addItem, isAdding, isAuthenticated } = useCart();
   const { isLoading: authLoading } = useAuth();
 
   const [state, setState] = useState<'idle' | 'added'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const activeVariants = (variants ?? []).filter((variant) => variant.isActive);
   const variantId =
@@ -40,15 +47,17 @@ export default function QuickAddToCart({
       setError(
         err instanceof Error
           ? err.message
-          : 'Could not add the product to the cart.',
+          : t("couldNotAdd"),
       );
     }
   };
 
-  if (!isAuthenticated && !authLoading) {
+  // Only show the sign-in message after the client has mounted, to avoid
+  // hydration mismatches (server renders isAuthenticated=null, authLoading=true).
+  if (mounted && !isAuthenticated && !authLoading) {
     return (
       <p className="px-4 py-2 text-xs font-medium text-slate-500">
-        Sign in to add items to your cart.
+        {t("signInToAdd")}
       </p>
     );
   }
@@ -70,10 +79,10 @@ export default function QuickAddToCart({
           <ShoppingBag size={16} />
         )}
         {isAddingThisProduct
-          ? 'Adding...'
+          ? t("adding")
           : state === 'added'
-            ? 'Added'
-            : 'Add to cart'}
+            ? t("added")
+            : t("addToCart")}
       </button>
 
       {error && <p className="mt-2 text-xs text-rose-600">{error}</p>}
